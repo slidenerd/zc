@@ -3,8 +3,12 @@
   "version": "0.0.1",
   "description": "crypto bot",
   "main": "index.js",
+  "engine": {
+    "node": ">= 8.0"
+  },
   "dependencies": {
     "botpress": "1.x",
+    "botpress-api.ai": "^2.1.0",
     "botpress-messenger": "^2.1.4",
     "botpress-web": "1.x"
   },

@@ -1,18 +1,93 @@
-welcome: # this is the #welcome bloc referenced in index.js
-  - typing: true
-    text: # Picks one randomly
-      - Hey there!
-      - Hello {{user.first_name}}
-      - Good day :)
-  - text: This is just a regular Hello World, I don't do anything ;)
-    typing: 2s
-  - text: Make sure to check out the 'index.js' file to see how I work
-    typing: true
-  - wait: 5s
-  - text: You can say goodbye now
-    typing: 1s
+convert-error:
+  - My wires blew up
 
-goodbye:
-  - text: You are leaving because of reason {{reason}}
-    typing: true
-  - Hope to see you back again soon! # if no other properties, you can just send a strings
+convert-success:
+  - {{quantity}} {{source}} = {{price}} {{destination}}
+
+convert-no-result:
+  - I couldn't find the conversion for {{source}} {{destination}}
+
+convert-missing-param:
+  - >
+    I need to know which coin. 
+    You can say for example "btc to usd"
+
+text:
+  - text: {{{text}}}.
+
+faq-hello:
+  - >
+    Hi there! I am Zupcoin. You can ask me the price of any coin. 
+    Try "eth to usd on bitfinex" or "ripple to usd"
+
+faq-exchanges:
+  - |
+    I support the following exchanges:
+    Bit2C
+    BitBay
+    Bitfinex
+    bitFlyer
+    bitFlyerFX
+    BitMarket
+    Bitso
+    BitSquare
+    Bitstamp
+    Bittrex
+    Bleutrade
+    BTC38
+    BTCC
+    BTCE
+    BTCMarkets
+  - |
+    BTER
+    BTCXIndia
+    CCEDK
+    Cexio
+    Coinbase
+    CoinCheck
+    Coinfloor
+    Coinone
+    Coinse
+    Coinsetter
+    Cryptopia
+    Cryptsy
+    EtherDelta
+    EthexIndia
+    Gatecoin
+    Gemini
+    HitBTC
+    Huobi
+    itBit
+    Korbit
+    Kraken
+  - |
+    LakeBTC
+    Liqui
+    LiveCoin
+    LocalBitcoins
+    Luno
+    MercadoBitcoin
+    MonetaGo
+    OKCoin
+    Paymium
+    Poloniex
+    QuadrigaCX
+    Quoine
+    TheRockTrading
+    Tidex
+    Unocoin
+    Vaultoro
+    Yacuna
+    Yobit
+    Yunbi
+
+default-fallback: # Picks one randomly
+  -
+    - I didn't get that. Can you say it again?
+    - I missed what you said. Say it again?
+    - Sorry, could you say that again?
+    - Sorry, can you say that again?
+    - Can you say that again?
+    - Sorry, I didn't get that.
+    - I missed that.
+    - I didn't get that.

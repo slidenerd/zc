@@ -1,39 +1,71 @@
-/*
-  CONGRATULATIONS on creating your first Botpress bot!
+const cryptocompare = require('./cryptocompare')
 
-  This is the programmatic entry point of your bot.
-  Your bot's logic resides here.
-  
-  Here's the next steps for you:
-  1. Read this file to understand how this simple bot works
-  2. Read the `content.yml` file to understand how messages are sent
-  3. Install a connector module (Facebook Messenger and/or Slack)
-  4. Customize your bot!
-
-  Happy bot building!
-
-  The Botpress Team
-  ----
-  Getting Started (Youtube Video): https://www.youtube.com/watch?v=HTpUmDz9kRY
-  Documentation: https://docs.botpress.io/
-  Our Slack Community: https://slack.botpress.io
-*/
+const NLP_THRESHOLD = process.env.NLP_THRESHOLD || 0.6 // 60%
 
 module.exports = function(bp) {
-  // Listens for a first message (this is a Regex)
-  // GET_STARTED is the first message you get on Facebook Messenger
-  bp.hear(/GET_STARTED|hello|hi|test|hey|holla/i, (event, next) => {
-    event.reply('#welcome') // See the file `content.yml` to see the block
+
+  bp.hear(/GET_STARTED/i, (event, next) => {
+    event.reply('#faq-hello')
   })
 
-  // You can also pass a matcher object to better filter events
   bp.hear({
-    type: /message|text/i,
-    text: /exit|bye|goodbye|quit|done|leave|stop/i
-  }, (event, next) => {
-    event.reply('#goodbye', {
-      // You can pass data to the UMM bloc!
-      reason: 'unknown'
-    })
+    'nlp.score': score => score >= NLP_THRESHOLD,
+    'nlp.metadata.intentName': name => name.startsWith('convert-')
+  }, async (event, next) => {
+
+    const { nlp } = event
+
+    // If there is missing "required" parameters
+    if (nlp.actionIncomplete) {
+      if (nlp.fulfillment && nlp.fulfillment.speech) {
+        // If you defined a fulfillment in API.AI's UI
+        return event.reply('#text', { text: nlp.fulfillment.speech })
+      } else {
+        return event.reply('#convert-missing-param')
+      }
+    }
+
+    const { destination, source, value: quantity, e = '' } = nlp.parameters
+    const exchange = e.trim()
+
+    if (source && destination) {
+      try {
+        let price = await cryptocompare.getPrice(source, destination, exchange)
+        
+        if (!price[destination]) {
+          bp.logger.debug(`[Fetch #1] Couldn't find ${source} -> ${destination} on ${exchange}`)
+          price = await cryptocompare.getPrice(source, destination)
+        }
+
+        if (!price[destination]) {
+          bp.logger.warn(`[Fetch #2] Couldn't find ${source} -> ${destination}`)
+          return event.reply('#convert-no-result', { source, destination })
+        }
+        
+        const finalPrice = formatMoney(Number(quantity || 1) * Number(price[destination]))
+        return event.reply('#convert-success', { quantity, source, destination, price: finalPrice })
+      } catch (err) {
+        bp.logger.error('Error getting price: ' + err.message)
+        return event.reply('#convert-error')
+      }
+    }
   })
+
+  bp.hear({
+    'nlp.score': score => score >= NLP_THRESHOLD,
+    'nlp.metadata.intentName': name => name.startsWith('faq-')
+  }, (event, next) => {
+    event.reply('#' + event.nlp.metadata.intentName)
+  })
+
+  // If we couldn't handle the request in any bp.hear()
+  bp.fallbackHandler = (event, next) => {
+    if (/text|message/i.test(event.type)) {
+      event.reply('#default-fallback')  
+    }
+  }
+}
+
+function formatMoney(n) {
+  return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
 }

@@ -14,7 +14,7 @@ module.exports = function(bp) {
 
     var cmd = event.text.split(" ")
 
-    bp.db.kvs.get(`users/id/${event.user}/alerts`)
+    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
     .then(alerts => {
 
       var als = alerts || []
@@ -23,10 +23,10 @@ module.exports = function(bp) {
         id: als.length,
         type: cmd[1],
         threshold: cmd[2],
-        user_id: cmd.user
+        user_id: event.user.id
       })
 
-      bp.db.kvs.set(`users/id/${cmd.user}/alerts`, als)
+      bp.db.kvs.set(`users/id/${event.user.id}/alerts`, als)
 
       console.log("Registered Alert")
     })
@@ -36,27 +36,27 @@ module.exports = function(bp) {
 
   bp.hear('list', (event, next) => {
 
-    bp.db.kvs.get(`users/id/${event.user}/alerts`)
+    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
     .then(alerts => {
 
       var als = alerts || []
 
-      bp.messenger.sendText(event.user, "Here are your alerts:", {waitDelivery: true})
+      bp.messenger.sendText(event.user.id, "Here are your alerts:", {waitDelivery: true})
 
       for (x in als) {
 
         var alert = als[x]
-        bp.messenger.sendText(event.user, "Alert " + alert.id + ": " + alert.type + " " + alert.threshold, {waitDelivery: true})
+        bp.messenger.sendText(event.user.id, "Alert " + alert.id + ": " + alert.type + " " + alert.threshold, {waitDelivery: true})
       }
     })
   })
 
-  // Syntax /unsubscribe 1 
+  // Syntax unsubscribe 1 
   bp.hear(/unsubscribe .+/, (event, next) => {
 
     var cmd = event.message.text.split(" ")
 
-    bp.db.kvs.get(`users/id/${event.user}/alerts`)
+    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
     .then(alerts => {
 
       var als = alerts || []
@@ -65,7 +65,7 @@ module.exports = function(bp) {
         return object.id !== cmd[1]
       })
 
-      bp.db.kvs.set(`users/id/${event.user}/alerts`, als)
+      bp.db.kvs.set(`users/id/${event.user.id}/alerts`, als)
     })
     
     event.reply('#unsubscribed')
@@ -149,7 +149,7 @@ module.exports = function(bp) {
               for (x in als) {
 
                 var alert = als[x]
-                
+
                 if (price >= alert.threshold) {
                   bp.messenger.sendText(user.id, "BTC just hit " + price)
                 }
@@ -161,9 +161,6 @@ module.exports = function(bp) {
       })
     })
   }
-
-  // Trigger price check immediatley to make sure it all works
-  bp.coinPriceCheck()
 }
 
 function formatMoney(n) {

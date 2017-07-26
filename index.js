@@ -1,4 +1,4 @@
-const cryptocompare = require('./cryptocompare')
+const cryptocompare = require('cryptocompare')
 
 const NLP_THRESHOLD = process.env.NLP_THRESHOLD || 0.6 // 60%
 
@@ -52,7 +52,7 @@ module.exports = function(bp) {
   // Syntax /unsubscribe 1 
   bp.hear(/unsubscribe .+/, (event, next) => {
 
-    var event = event.message.text.split(" ")
+    var cmd = event.message.text.split(" ")
 
     bp.db.kvs.get(`users/id/${event.user}/alerts`)
     .then(alerts => {
@@ -60,7 +60,7 @@ module.exports = function(bp) {
       var als = alerts || []
       
       als = als.filter(object => {
-        return object.id !== event[1]
+        return object.id !== cmd[1]
       })
 
       bp.db.kvs.set(`users/id/${event.user}/alerts`, als)

@@ -11,6 +11,7 @@
     "botpress-messenger": "^2.1.4",
     "botpress-scheduler": "^2.0.9",
     "botpress-web": "1.x",
+    "cryptocompare": "^0.1.0",
     "sqlite3": "^3.1.8"
   },
   "scripts": {

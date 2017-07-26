@@ -8,6 +8,71 @@ module.exports = function(bp) {
     event.reply('#faq-hello')
   })
 
+
+  // Syntax "/subscribe BTC absolute 500"
+  bp.hear({
+    'message.text': '/subscribe'
+  }, (event, next) => {
+
+    var event = event.message.text.split(" ")
+
+    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+    .then(alerts => {
+
+      var als = alerts || []
+      
+      als.insert({
+        id: als.length,
+        type: event[1],
+        threshold: event[2],
+        user_id: event.user.id
+      })
+
+      bp.db.kvs.set(`users/id/${event.user.id}/alerts`, als)
+    })
+    
+    event.reply('#subscribed')
+  })
+
+  bp.hear({
+    'message.text': '/list'
+  }, (event, next) => {
+
+    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+    .then(alerts => {
+
+      var als = alerts || []
+
+      event.messenger.sendText(event.user.id, "Here are your alerts:", {waitDelivery: true})
+
+      for (object in als) {
+        event.messenger.sendText(event.user.id, "Alert " + object.id + ": " + object.type + " " + object, {waitDelivery: true})
+      }
+    })
+  })
+
+  // Syntax /unsubscribe 1 
+  bp.hear({
+    'message.text': '/unsubscribe'
+  }, (event, next) => {
+
+    var event = event.message.text.split(" ")
+
+    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+    .then(alerts => {
+
+      var als = alerts || []
+      
+      als = als.filter(object => {
+        return object.id !== event[1]
+      })
+
+      bp.db.kvs.set(`users/id/${event.user.id}/alerts`, als)
+    })
+    
+    event.reply('#unsubscribed')
+  })
+
   bp.hear({
     'nlp.score': score => score >= NLP_THRESHOLD,
     'nlp.metadata.intentName': name => name.startsWith('convert-')
@@ -64,8 +129,48 @@ module.exports = function(bp) {
       event.reply('#default-fallback')  
     }
   }
+
+  bp.coinPriceCheck = () => {
+
+    cryptocompare.price('BTC', 'USD')
+    .then(prices => {
+
+      var price = prices.USD
+
+      bp.db.get()
+      .then(knex => knex('users'))
+      .then(users =>
+      
+        users.then(objects => {
+
+          for (user in objects) {
+
+            bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+            .then(alerts => {
+
+              var als = alerts || []
+
+              for (alert in als) {
+
+                if (price >= alert.threshold) {
+                  event.messenger.sendText(user.id, "BTC just hit " + price)
+                }
+              }
+
+            })
+
+          }
+        })
+      
+      )
+    })
+  }
 }
 
 function formatMoney(n) {
   return n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
+}
+
+function schedule() {
+
 }

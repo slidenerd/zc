@@ -4,11 +4,10 @@
 
 # hostname: "" # MESSENGER_HOST
 
-# applicationID: "" # MESSENGER_APP_ID
-# accessToken: "" # MESSENGER_ACCESS_TOKEN
-# appSecret: "" # MESSENGER_APP_SECRET
-
-# verifyToken: "" # MESSENGER_VERIFY_TOKEN
+applicationID: "1993127137583536" # MESSENGER_APP_ID
+accessToken: "EAAcUvRMHIbABALBvVuqGKj5Cd4MUjhpoFykch5sQXXnF3ZBJjV7WZCDg8Q2uwsG5SuaFOq5s8VDvPBTQgoktHBXLL7jwzArVZBeWs0rf9Bw6iqMfIWapdcIXITkCj3Q8iNToU5fKSrx5ZBmrQF3khndojC5RPW9WCiZC7Ptb9cQZDZD" # MESSENGER_ACCESS_TOKEN
+appSecret: "09e869ec409413d67f88d6da8662d5f2" # MESSENGER_APP_SECRET
+verifyToken: "zupcoin" # MESSENGER_VERIFY_TOKEN
 
 # displayGetStarted: true
 # greetingMessage: ""

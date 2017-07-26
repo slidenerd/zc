@@ -12,6 +12,12 @@ convert-missing-param:
     I need to know which coin. 
     You can say for example "btc to usd"
 
+subscribed:
+  - Subscribed to alert
+
+unsubscribed:
+  - Unsubscribed to alert
+
 text:
   - text: {{{text}}}.
 

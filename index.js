@@ -139,9 +139,11 @@ module.exports = function(bp) {
       .then(knex => knex('users'))
       .then(users => {
 
-          for (user in users) {
+          for (y in users) {
 
-            bp.db.kvs.get(`users/id/${user.id}/alerts`)
+            var user = users[y]
+
+            bp.db.kvs.get(`users/id/${user.userId}/alerts`)
             .then(alerts => {
 
               var als = alerts || []
@@ -151,16 +153,16 @@ module.exports = function(bp) {
                 var alert = als[x]
 
                 if (price >= alert.threshold) {
-                  bp.messenger.sendText(user.id, "BTC just hit " + price)
+                  bp.messenger.sendText(user.userId, "BTC just hit " + price)
                 }
               }
-
             })
-
           }
       })
     })
   }
+
+  bp.coinPriceCheck()
 }
 
 function formatMoney(n) {

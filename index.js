@@ -1,9 +1,9 @@
-const cryptocompare = require('cryptocompare')
+global.fetch = require('node-fetch');
 
+const cryptocompare = require('cryptocompare')
 const NLP_THRESHOLD = process.env.NLP_THRESHOLD || 0.6 // 60%
 
 module.exports = function(bp) {
-
   bp.hear(/GET_STARTED/i, (event, next) => {
     event.reply('#faq-hello')
   })
@@ -43,8 +43,10 @@ module.exports = function(bp) {
 
       bp.messenger.sendText(event.user, "Here are your alerts:", {waitDelivery: true})
 
-      for (object in als) {
-        bp.messenger.sendText(event.user, "Alert " + object.id + ": " + object.type + " " + object, {waitDelivery: true})
+      for (x in als) {
+
+        var alert = als[x]
+        bp.messenger.sendText(event.user, "Alert " + alert.id + ": " + alert.type + " " + alert.threshold, {waitDelivery: true})
       }
     })
   })
@@ -135,32 +137,35 @@ module.exports = function(bp) {
 
       bp.db.get()
       .then(knex => knex('users'))
-      .then(users =>
-      
-        users.then(objects => {
+      .then(users => {
 
-          for (user in objects) {
+          for (user in users) {
 
-            bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+            bp.db.kvs.get(`users/id/${user.id}/alerts`)
             .then(alerts => {
 
               var als = alerts || []
 
-              for (alert in als) {
+              for (x in als) {
+
+                var alert = als[x]
+
+                console.log(alert.threshold)
 
                 if (price >= alert.threshold) {
-                  event.messenger.sendText(user.id, "BTC just hit " + price)
+                  bp.messenger.sendText(user.id, "BTC just hit " + price)
                 }
               }
 
             })
 
           }
-        })
-      
-      )
+      })
     })
   }
+
+  // Trigger price check immediatley to make sure it all works
+  bp.coinPriceCheck()
 }
 
 function formatMoney(n) {

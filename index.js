@@ -149,9 +149,7 @@ module.exports = function(bp) {
               for (x in als) {
 
                 var alert = als[x]
-
-                console.log(alert.threshold)
-
+                
                 if (price >= alert.threshold) {
                   bp.messenger.sendText(user.id, "BTC just hit " + price)
                 }

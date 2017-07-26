@@ -9,56 +9,52 @@ module.exports = function(bp) {
   })
 
 
-  // Syntax "/subscribe BTC absolute 500"
-  bp.hear({
-    'message.text': '/subscribe'
-  }, (event, next) => {
+  // Syntax "subscribe absolute 500"
+  bp.hear(/subscribe .+/, (event, next) => {
 
-    var event = event.message.text.split(" ")
+    var cmd = event.text.split(" ")
 
-    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+    bp.db.kvs.get(`users/id/${event.user}/alerts`)
     .then(alerts => {
 
       var als = alerts || []
       
-      als.insert({
+      als.push({
         id: als.length,
-        type: event[1],
-        threshold: event[2],
-        user_id: event.user.id
+        type: cmd[1],
+        threshold: cmd[2],
+        user_id: cmd.user
       })
 
-      bp.db.kvs.set(`users/id/${event.user.id}/alerts`, als)
+      bp.db.kvs.set(`users/id/${cmd.user}/alerts`, als)
+
+      console.log("Registered Alert")
     })
     
     event.reply('#subscribed')
   })
 
-  bp.hear({
-    'message.text': '/list'
-  }, (event, next) => {
+  bp.hear('list', (event, next) => {
 
-    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+    bp.db.kvs.get(`users/id/${event.user}/alerts`)
     .then(alerts => {
 
       var als = alerts || []
 
-      event.messenger.sendText(event.user.id, "Here are your alerts:", {waitDelivery: true})
+      bp.messenger.sendText(event.user, "Here are your alerts:", {waitDelivery: true})
 
       for (object in als) {
-        event.messenger.sendText(event.user.id, "Alert " + object.id + ": " + object.type + " " + object, {waitDelivery: true})
+        bp.messenger.sendText(event.user, "Alert " + object.id + ": " + object.type + " " + object, {waitDelivery: true})
       }
     })
   })
 
   // Syntax /unsubscribe 1 
-  bp.hear({
-    'message.text': '/unsubscribe'
-  }, (event, next) => {
+  bp.hear(/unsubscribe .+/, (event, next) => {
 
     var event = event.message.text.split(" ")
 
-    bp.db.kvs.get(`users/id/${event.user.id}/alerts`)
+    bp.db.kvs.get(`users/id/${event.user}/alerts`)
     .then(alerts => {
 
       var als = alerts || []
@@ -67,7 +63,7 @@ module.exports = function(bp) {
         return object.id !== event[1]
       })
 
-      bp.db.kvs.set(`users/id/${event.user.id}/alerts`, als)
+      bp.db.kvs.set(`users/id/${event.user}/alerts`, als)
     })
     
     event.reply('#unsubscribed')

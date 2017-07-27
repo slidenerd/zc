@@ -41,12 +41,11 @@ module.exports = function(bp) {
 
       var als = alerts || []
 
-      bp.messenger.sendText(event.user.id, "Here are your alerts:", {waitDelivery: true})
+      event.reply('#alerts')
 
       for (x in als) {
-
         var alert = als[x]
-        bp.messenger.sendText(event.user.id, "Alert " + alert.id + ": " + alert.type + " " + alert.threshold, {waitDelivery: true})
+        event.reply('#text', { text:  "Alert " + alert.id + ": " + alert.type + " " + alert.threshold})
       }
     })
   })

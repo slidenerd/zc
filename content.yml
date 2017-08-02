@@ -19,7 +19,8 @@ unsubscribed:
   - Unsubscribed to alert
 
 alerts:
-  - Here are your alerts:
+  - >
+    Here are your alerts:
 
 text:
   - text: {{{text}}}.

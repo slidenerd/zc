@@ -92,11 +92,11 @@ module.exports = function(bp) {
 
     if (source && destination) {
       try {
-        let price = await cryptocompare.getPrice(source, destination, exchange)
+        let price = await cryptocompare.price(source, destination, { exchanges: exchange })
         
         if (!price[destination]) {
           bp.logger.debug(`[Fetch #1] Couldn't find ${source} -> ${destination} on ${exchange}`)
-          price = await cryptocompare.getPrice(source, destination)
+          price = await cryptocompare.price(source, destination)
         }
 
         if (!price[destination]) {

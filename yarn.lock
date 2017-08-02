@@ -141,7 +141,7 @@ aws4@^1.2.1:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
 
-axios@^0.15.2:
+axios@^0.15.2, axios@^0.15.3:
   version "0.15.3"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.15.3.tgz#2c9d638b2e191a08ea1d6cc988eadd6ba5bdc053"
   dependencies:
@@ -232,6 +232,13 @@ boom@2.x.x:
   resolved "https://registry.yarnpkg.com/boom/-/boom-2.10.1.tgz#39c8918ceff5799f83f9492a848f625add0c766f"
   dependencies:
     hoek "2.x.x"
+
+botpress-api.ai@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/botpress-api.ai/-/botpress-api.ai-2.1.1.tgz#3afb8ac3afe32196a0dd8d315f78240a5e6f4c15"
+  dependencies:
+    axios "^0.15.3"
+    botpress-version-manager "^1.0.2"
 
 botpress-messenger@^2.1.6:
   version "2.2.7"

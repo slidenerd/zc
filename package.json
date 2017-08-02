@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "botpress": "1.x",
+    "botpress-api.ai": "^2.1.1",
     "botpress-messenger": "^2.1.6",
     "botpress-scheduler": "^2.0.9",
     "botpress-web": "1.x",

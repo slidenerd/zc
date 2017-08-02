@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "botpress": "1.x",
-    "botpress-messenger": "^2.1.4",
+    "botpress-messenger": "^2.1.6",
     "botpress-scheduler": "^2.0.9",
     "botpress-web": "1.x",
     "cryptocompare": "^0.1.0",
